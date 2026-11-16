@@ -1,6 +1,6 @@
 # Watercoin — $WATER
 
-Chapter two from the Foodcoin team. Foodcoin sent $70,000+ to feed hungry families; $WATER routes creator rewards,
+Chapter two from the Foodcoin team. Foodcoin (still running) has sent $70,000+ to feed hungry families; $WATER routes creator rewards,
 on-chain through donate.gg, to **WaterAid America** (clean water, toilets and hygiene).
 
 - Site: `index.html`, `styles.css`, `main.js` (interactions, scroll scenes, wave engine), `water.js` (WebGL water hero),
