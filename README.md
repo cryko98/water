@@ -4,6 +4,7 @@ Chapter two from the Foodcoin team. Foodcoin (still running) has sent $70,000+ t
 on-chain through donate.gg, to **WaterAid America** (clean water, toilets and hygiene).
 
 - Site: `index.html`, `styles.css`, `main.js` (interactions, scroll scenes, wave engine), `water.js` (WebGL water hero),
+  `drops.js` (raymarched liquid drops that fuse on scroll),
   `meter.js` (Reservoir client). Assets in `assets/` (logo, favicons, self-hosted GSAP/ScrollTrigger/Lenis).
 - API: `api/meter.js`, a Vercel serverless function (core logic in `api/_lib/meter-core.js`).
 - Palette from the logo: cobalt `#1339F4`, cream `#FEF1C4`, ink `#050C3A`.

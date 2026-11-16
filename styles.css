@@ -191,21 +191,11 @@ h2 em { font-size: 1.08em; }
 .depth-fill { position: absolute; left: 0; right: 0; top: 0; height: 100%; background: #fff; transform-origin: top; transform: scaleY(0); }
 .depth-val b { font-weight: 600; }
 
-.cursor {
-  position: fixed; z-index: 90; left: 0; top: 0;
-  width: 38px; height: 38px; margin: -19px 0 0 -19px;
-  pointer-events: none;
-  mix-blend-mode: difference;
-  opacity: 0;
-}
-.cursor span {
-  display: block; width: 100%; height: 100%;
-  border-radius: 50%; border: 1.5px solid #fff;
-  transition: transform .45s var(--ease), background .3s;
-}
-.cursor.is-hover span { transform: scale(1.9); background: rgba(255,255,255,1); }
-.cursor.is-down span { transform: scale(.6); }
-@media (hover: none) { .cursor { display: none; } }
+/* blend on the wrapper: Chrome drops a filtered SVG that also blends */
+.cursor-wrap { position: fixed; z-index: 90; inset: 0; pointer-events: none; mix-blend-mode: difference; opacity: 0; transition: opacity .3s; }
+.cursor { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cursor circle { fill: #fff; }
+@media (hover: none) { .cursor-wrap { display: none; } }
 
 #bubbles { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 30; pointer-events: none; }
 
@@ -399,6 +389,25 @@ section, footer { position: relative; }
 .ch-link { justify-self: start; font-family: var(--f-mono); font-size: 13px; text-decoration: none; border-bottom: 1.5px solid currentColor; }
 .ch-arrow { color: var(--sky); }
 .ch-arrow svg { width: 100%; }
+
+/* ---------- DROP BY DROP (raymarched liquid) ---------- */
+.drops { height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; background: var(--ink); }
+#drops { position: absolute; inset: 0; width: 100%; height: 100%; }
+.drops.no-gl { background: radial-gradient(60% 60% at 50% 55%, #0E1C78, var(--ink)); }
+.dr-copy { position: absolute; left: var(--pad); right: var(--pad); top: 110px; z-index: 1; display: grid; gap: 22px; pointer-events: none; }
+.dr-lines { position: relative; height: clamp(50px, 6.6vw, 110px); }
+.dr-line { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: clamp(38px, 6.4vw, 110px); opacity: 0; }
+.dr-line:first-child { opacity: 1; }
+.dr-line em { color: var(--sky); }
+.dr-foot { position: absolute; left: var(--pad); bottom: 44px; z-index: 1; display: grid; gap: 2px; max-width: 34ch; font-size: clamp(16px, 1.4vw, 20px); font-weight: 650; pointer-events: none; }
+.dr-foot span:last-child { color: var(--sky); }
+.dr-hint { position: absolute; right: var(--pad); bottom: 48px; z-index: 1; font-family: var(--f-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .6; pointer-events: none; }
+@media (max-width: 760px) {
+  .dr-copy { top: 96px; }
+  .dr-lines { height: 2.1em; font-size: clamp(32px, 9vw, 44px); }
+  .dr-line { font-size: 1em; white-space: normal; }
+  .dr-hint { display: none; }
+}
 
 /* ---------- THIRST INDEX (pinned) ---------- */
 .thirst { height: 100vh; height: 100svh; min-height: 640px; padding: 110px var(--pad) 60px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); grid-template-rows: auto 1fr; gap: 20px 40px; }

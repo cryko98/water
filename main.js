@@ -126,8 +126,8 @@ const CONFIG = {
   /* =======================================================
      Cursor + magnetic buttons
      ======================================================= */
-  const cursor = $('.cursor');
-  let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
+  const cursor = $('.cursor-wrap');
+  let mx = innerWidth / 2, my = innerHeight / 2;
   if (fine) {
     addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; cursor.style.opacity = 1; }, { passive: true });
     addEventListener('pointerdown', () => cursor.classList.add('is-down'));
@@ -143,9 +143,18 @@ const CONFIG = {
       m.style.transition = 'transform .5s cubic-bezier(.16,1,.3,1), color .4s, border-color .4s, background .4s';
     }
   }
+  // a liquid cursor: a chain of drops fused by an SVG goo filter
+  const blobs = $$('.cursor-wrap circle').map((el, i) => ({ el, x: mx, y: my, r: +el.getAttribute('r'), r0: +el.getAttribute('r'), k: .32 - i * .045 }));
   function moveCursor() {
-    cx += (mx - cx) * .2; cy += (my - cy) * .2;
-    cursor.style.transform = `translate(${cx}px, ${cy}px)`;
+    const hover = cursor.classList.contains('is-hover'), down = cursor.classList.contains('is-down');
+    let px = mx, py = my;
+    blobs.forEach((b, i) => {
+      b.x += (px - b.x) * b.k; b.y += (py - b.y) * b.k;
+      const target = i === 0 ? (down ? b.r0 * .6 : hover ? b.r0 * 2.6 : b.r0) : (hover ? b.r0 * .5 : b.r0);
+      b.r += (target - b.r) * .18;
+      b.el.setAttribute('cx', b.x.toFixed(1)); b.el.setAttribute('cy', b.y.toFixed(1)); b.el.setAttribute('r', b.r.toFixed(2));
+      px = b.x; py = b.y;
+    });
   }
 
   /* =======================================================
@@ -217,12 +226,24 @@ const CONFIG = {
     walk(root);
     return $$('.sw > span', root);
   }
+  const displace = $('#liquidText feDisplacementMap');
   for (const h of $$('[data-split]')) {
     const words = splitWords(h);
     gsap.set(words, { yPercent: 115 });
     ScrollTrigger.create({
       trigger: h, start: 'top 85%', once: true,
-      onEnter: () => gsap.to(words, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: .05 })
+      onEnter: () => {
+        gsap.to(words, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: .05 });
+        // the heading surfaces through water: a displacement that calms down
+        if (reduce || !displace) return;
+        h.style.filter = 'url(#liquidText)';
+        const o = { s: 70 };
+        gsap.to(o, {
+          s: 0, duration: 1.9, ease: 'power3.out',
+          onUpdate: () => displace.setAttribute('scale', o.s.toFixed(1)),
+          onComplete: () => { h.style.filter = ''; }
+        });
+      }
     });
   }
 
@@ -317,6 +338,29 @@ const CONFIG = {
   }
   gsap.from('.chapter, .ch-arrow', { y: 80, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .12, scrollTrigger: { trigger: '.chapters', start: 'top 80%' } });
 
+  /* ---------- drop by drop: droplets fuse as you scroll ---------- */
+  const dropsSec = $('.drops');
+  if (dropsSec) {
+    const lines = $$('.dr-line', dropsSec);
+    gsap.set(lines.slice(1), { autoAlpha: 0, y: 50 });
+    let cur = 0;
+    const showLine = i => {
+      if (i === cur) return;
+      const down = i > cur;
+      gsap.to(lines[cur], { autoAlpha: 0, y: down ? -50 : 50, duration: .45, ease: 'power2.in', overwrite: true });
+      gsap.fromTo(lines[i], { autoAlpha: 0, y: down ? 50 : -50 }, { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out', overwrite: true });
+      cur = i;
+    };
+    gsap.from('.dr-foot span', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: .1, scrollTrigger: { trigger: dropsSec, start: 'top 40%' } });
+    ScrollTrigger.create({
+      trigger: dropsSec, start: 'top top', end: () => '+=' + innerHeight * 2.4, pin: true, scrub: true,
+      onUpdate: self => {
+        if (window.__drops) window.__drops.set(self.progress * 1.15);
+        showLine(self.progress < .3 ? 0 : self.progress < .62 ? 1 : 2);
+      }
+    });
+  }
+
   /* ---------- the thirst index (pinned) ---------- */
   const thirst = $('.thirst');
   if (thirst) {
@@ -344,8 +388,8 @@ const CONFIG = {
           gsap.killTweensOf(c);
           c.v = 0;
           gsap.to(c, { v: +s.dataset.to, duration: reduce ? .01 : 1.4, ease: 'expo.out', onUpdate: () => showNum(n, c.v) });
-        } else if (gsap.getProperty(s, 'autoAlpha') > 0) {
-          gsap.to(s, { autoAlpha: 0, y: down ? -60 : 60, duration: .4, ease: 'power2.in' });
+        } else {
+          gsap.to(s, { autoAlpha: 0, y: down ? -60 : 60, duration: .35, ease: 'power2.in' });
         }
       });
     }

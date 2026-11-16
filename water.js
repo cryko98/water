@@ -54,7 +54,7 @@
   const RENDER = `#version 300 es
   precision highp float;
   in vec2 uv; out vec4 o;
-  uniform sampler2D s; uniform sampler2D bg; uniform vec2 px; uniform float t; uniform float aspect;
+  uniform sampler2D s; uniform sampler2D bg; uniform vec2 px; uniform float t; uniform float aspect; uniform vec2 mouse;
 
   // warped interference net: bright filaments like light on a pool floor
   float caustic(vec2 p, float t){
@@ -74,13 +74,18 @@
     float hy = texture(s, uv + vec2(0., px.y)).r - texture(s, uv - vec2(0., px.y)).r;
     vec3 n = normalize(vec3(-hx, -hy, .09));
 
-    vec2 ruv = uv + n.xy * .045;
-    vec3 base = texture(bg, ruv).rgb;
+    // refraction with dispersion: each wavelength bends a little differently
+    vec2 off = n.xy * .045;
+    vec3 base;
+    base.r = texture(bg, uv + off * .9).r;
+    base.g = texture(bg, uv + off).g;
+    base.b = texture(bg, uv + off * 1.14).b;
 
-    // caustic light, nudged by the ripples
+    // two layers of caustic light at different depths, nudged by the ripples
     vec2 cp = (uv + n.xy * .04) * vec2(aspect, 1.) * 3.2;
     float c = caustic(cp, t * .7);
-    vec3 col = base + vec3(.62, .74, 1.) * c * .16;
+    float c2 = caustic(cp * 1.9 + 4.7, t * .9 + 2.);
+    vec3 col = base + vec3(.62, .74, 1.) * c * .15 + vec3(.9, .92, 1.) * c * c2 * .22;
 
     // soft light shafts from above
     float ang = atan(uv.x - .35, 1.35 - uv.y);
@@ -92,6 +97,18 @@
     float spec = pow(max(dot(reflect(-L, n), vec3(0., 0., 1.)), 0.), 90.);
     col += vec3(1., .97, .88) * spec * .9;
     col += (hx + hy) * .55;
+
+    // a light that follows the cursor across the surface
+    vec2 md = (uv - mouse) * vec2(aspect, 1.);
+    vec3 Lm = normalize(vec3(-md, .32));
+    float ms = pow(max(dot(reflect(-Lm, n), vec3(0., 0., 1.)), 0.), 140.);
+    float glow = exp(-dot(md, md) * 9.);
+    col += vec3(1., .96, .84) * ms * 1.6 * smoothstep(.8, .1, length(md));
+    col += vec3(.55, .68, 1.) * glow * .09;
+
+    // fresnel: grazing slopes mirror a pale sky
+    float fr = pow(1. - n.z, 3.) * 2.2;
+    col = mix(col, vec3(.8, .87, 1.), clamp(fr, 0., .35));
 
     // vignette toward deeper water at the bottom
     col *= mix(.78, 1.04, smoothstep(0., .85, uv.y));
@@ -210,12 +227,12 @@
   /* ---------------- sizing ---------------- */
   let aspect = 1;
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 1.75);
+    const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2);
     const w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
     if (w === canvas.width && h === canvas.height && targets.length) { drawBackground(); return true; }
     canvas.width = w; canvas.height = h;
     aspect = w / h;
-    const div = coarse ? 4 : 3;
+    const div = coarse ? 3.5 : 2.4;
     const nw = Math.max(64, Math.round(canvas.clientWidth / div)), nh = Math.max(64, Math.round(canvas.clientHeight / div));
     if (nw !== simW || nh !== simH) {
       for (const t of targets) { gl.deleteTexture(t.tex); gl.deleteFramebuffer(t.fb); }
@@ -243,6 +260,9 @@
   function drop(x, y, radius, strength) { if (drops.length < 24) drops.push([x, y, radius, strength]); }
 
   function frame(t) {
+    if (targets.length < 2) return;
+    mouseX += (tMouseX - mouseX) * .08; mouseY += (tMouseY - mouseY) * .08;
+    if (!coarse && !reduce && lastX < 0) { tMouseX = .5 + Math.sin(t / 2600) * .3; tMouseY = .62 + Math.cos(t / 3100) * .18; }
     for (const d of drops.splice(0)) pass(P.drop, u => {
       gl.uniform2f(u.c, d[0], d[1]); gl.uniform1f(u.r, d[2]); gl.uniform1f(u.a, d[3]); gl.uniform1f(u.aspect, aspect);
     });
@@ -258,17 +278,19 @@
     gl.uniform2f(u.px, 1 / simW, 1 / simH);
     gl.uniform1f(u.t, t / 1000);
     gl.uniform1f(u.aspect, aspect);
+    gl.uniform2f(u.mouse, mouseX, mouseY);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
   /* ---------------- interaction ---------------- */
-  let lastX = -1, lastY = -1;
+  let lastX = -1, lastY = -1, mouseX = .3, mouseY = .7, tMouseX = .3, tMouseY = .7;
   const toUv = e => {
     const r = canvas.getBoundingClientRect();
     return [(e.clientX - r.left) / r.width, 1 - (e.clientY - r.top) / r.height];
   };
   hero.addEventListener('pointermove', e => {
     const [x, y] = toUv(e);
+    tMouseX = x; tMouseY = y;
     const dx = x - lastX, dy = y - lastY;
     if (lastX < 0 || dx * dx + dy * dy > 0.00002) {
       drop(x, y, coarse ? .03 : .022, .028);
