@@ -183,6 +183,10 @@
         els.lock.textContent = `🔒 ${Math.round(p.shareBps / 100)}% of creator fees → donate.gg → WaterAid America · locked forever`
           + (pct !== null ? ` · donate.gg's ${pct}% processing fee is deducted before settlement` : '');
       }
+    } else if (d.onchain === 'not_created') {
+      // the chain answered: this mint is not trading yet, so there is nothing in the vaults
+      els.tVault.textContent = sol('0'); els.tPending.textContent = sol('0');
+      setLink(els.tVaultLink, null); setLink(els.tPendingLink, null);
     } else {
       els.tVault.textContent = 'unavailable'; els.tPending.textContent = 'unavailable';
     }
@@ -190,6 +194,7 @@
     const stale = (s && s.stale) || !s;
     if (!s) setLive('is-error', 'Unavailable');
     else if (stale) setLive('is-idle', 'Cached');
+    else if (d.onchain === 'not_created' && Number(s.receipts) === 0) setLive('is-pre', 'Ready · waiting for first trade');
     else setLive(null, 'Live · settled data');
     updateStatusLine();
   }
@@ -199,7 +204,8 @@
     const s = last.settled;
     if (!s || !s.fetchedAt) { els.updated.textContent = 'Settled data unavailable right now. Retrying'; return; }
     const parts = [`Settled data ${s.stale ? 'cached, last confirmed' : 'updated'} ${ago(s.fetchedAt)}`];
-    if (last.errors && last.errors.chain) parts.push('vault balances unavailable');
+    if (last.onchain === 'not_created') parts.push('vaults open with the first trade');
+    else if (last.errors && last.errors.chain) parts.push('vault balances unavailable');
     els.updated.textContent = parts.join(' · ');
   }
   setInterval(updateStatusLine, 15000);

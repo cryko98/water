@@ -8,15 +8,17 @@
  * Unclaimed creator fees and pending donations are reported separately (in SOL) and never counted.
  * No live SOL price is involved, so a price move can't change an already-counted total.
  *
- * LAUNCH CHECKLIST: set EXPECTED.mint to the $WATER mint. Optionally pin EXPECTED.configId to the donation
- * config id from the first settled receipt (donationReceipt.config.id) so receipts from any other config are rejected.
+ * EXPECTED.mint is the $WATER mint. After the first settled donation, optionally pin EXPECTED.configId to that
+ * receipt's donationReceipt.config.id so receipts from any other donation config are rejected.
+ * Until the coin trades, the fee-sharing account does not exist on-chain yet: readChain reports that as
+ * NotCreatedYet, which the API publishes as "not_found" (shown as "opens with the first trade", not as an error).
  */
 const {
   address, getAddressEncoder, getAddressDecoder, getProgramDerivedAddress
 } = require('@solana/addresses');
 
 const EXPECTED = {            // not frozen so tests can set a mint; only edit these constants here
-  mint: '',                                                               // $WATER mint: empty until launch (CA coming soon)
+  mint: 'FV23gQJYmnqSZtEkVCzVAzwS5YmSQcp7UuYSLVepump',                   // $WATER mint (same value as CONFIG.CA in main.js)
   chainId: 101,
   donationSource: 'pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ',          // Pump Fees program
   configId: null,                                                         // pin after the first settled receipt (null = any config)
@@ -43,6 +45,10 @@ const DISC = Object.freeze({ sharing: 'd84a0900388c5d4b', donation: 'f6c56009c11
 
 class RefreshRejected extends Error {
   constructor(msg) { super(msg); this.name = 'RefreshRejected'; }
+}
+// The mint's fee-sharing account is not on-chain yet (the coin has not launched or sharing is not set up).
+class NotCreatedYet extends Error {
+  constructor() { super('fee-sharing config not created yet'); this.name = 'NotCreatedYet'; }
 }
 
 /* ------------------------------------------------------------------ helpers */
@@ -251,7 +257,8 @@ async function readChain(rpc, { minContextSlot = 0 } = {}) {
   const [sharingAcc, vaultAcc, ammAcc] = res.value;
   const b = acc => (acc ? Buffer.from(acc.data[0], 'base64') : null);
 
-  if (!sharingAcc || sharingAcc.owner !== PROGRAMS.fees || hex8(b(sharingAcc)) !== DISC.sharing) throw new Error('fee-sharing config not found');
+  if (!sharingAcc) throw new NotCreatedYet();
+  if (sharingAcc.owner !== PROGRAMS.fees || hex8(b(sharingAcc)) !== DISC.sharing) throw new Error('fee-sharing config not found');
   const sd = b(sharingAcc);
   if (keyAt(sd, 11) !== EXPECTED.mint) throw new Error('fee-sharing config is for another mint');
   const locked = sd[75] === 1;
@@ -309,7 +316,7 @@ async function readChain(rpc, { minContextSlot = 0 } = {}) {
 }
 
 module.exports = {
-  EXPECTED, RefreshRejected, isLaunched,
+  EXPECTED, RefreshRejected, NotCreatedYet, isLaunched,
   fetchAllReceipts, validateReceipt, buildLedger, summarize, ledgerToJson, ledgerFromJson,
   makeRpc, readChain, deriveAccounts, isWaterReceipt
 };

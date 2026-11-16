@@ -9,23 +9,21 @@ on-chain through donate.gg, to **WaterAid America** (clean water, toilets and hy
 - API: `api/meter.js`, a Vercel serverless function (core logic in `api/_lib/meter-core.js`).
 - Palette from the logo: cobalt `#1339F4`, cream `#FEF1C4`, ink `#050C3A`.
 
-## Launch checklist
+## Config
 
-1. **Front end**: the top of `main.js`:
+Contract address: `FV23gQJYmnqSZtEkVCzVAzwS5YmSQcp7UuYSLVepump`. It lives in two places that must stay equal
+(a test checks this):
 
-   ```js
-   const CONFIG = {
-     CA: '',        // $WATER contract address
-     X_URL: '',     // official X profile
-     BUY_URL: ''    // e.g. https://pump.fun/coin/<CA>
-   };
-   ```
+1. **Front end**: `CONFIG` at the top of `main.js` (`CA`, `X_URL`, `BUY_URL`). Every X button, the Buy button and the
+   Copy CA controls read it.
+2. **Reservoir tracker**: `EXPECTED.mint` in `api/_lib/meter-core.js`.
 
-   Every X button, the Buy button and the Copy CA controls pick these up. While empty they show "coming soon" toasts.
+Before the coin trades, the mint's fee-sharing account does not exist on-chain. `/api/meter` reports that as
+`"onchain": "not_created"` and the page shows "Ready · waiting for first trade" with empty vaults and $0 settled.
+The moment trading starts the same code reads the vaults and, once donations settle, the receipts. No redeploy needed.
 
-2. **Reservoir tracker**: in `api/_lib/meter-core.js` set `EXPECTED.mint` to the same CA. Until then `/api/meter`
-   answers `{ "prelaunch": true }` and the page shows "Awaiting launch".
-   After the first settled donation, optionally pin `EXPECTED.configId` to the receipt's `donationReceipt.config.id`.
+After the first settled donation, optionally pin `EXPECTED.configId` to the receipt's `donationReceipt.config.id`
+so receipts from any other donation config are rejected.
 
 ## The Reservoir (settled donations, server-side)
 

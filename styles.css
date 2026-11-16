@@ -201,7 +201,7 @@ h2 em { font-size: 1.08em; }
 
 .toast {
   position: fixed; z-index: 95; left: 50%; bottom: 28px;
-  transform: translate(-50%, 140%);
+  transform: translate(-50%, calc(100% + 60px));
   padding: 14px 22px; border-radius: 99px;
   background: var(--cream); color: var(--blue);
   font-weight: 700; font-size: 14px;

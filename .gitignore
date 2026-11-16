@@ -2,3 +2,11 @@
 node_modules/
 .DS_Store
 Thumbs.db
+video/node_modules/
+video/cap/
+video/stills/
+video/audio/score.wav
+video/audio/mix.wav
+video/*.mp4
+video/review/
+video/render.log

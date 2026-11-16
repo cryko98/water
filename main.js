@@ -3,11 +3,11 @@
    GSAP + ScrollTrigger + Lenis (self-hosted in assets/vendor).
    ========================================================= */
 
-// ---- edit these at launch ----
+// ---- the three public links. Empty CA / BUY_URL would fall back to "coming soon" ----
 const CONFIG = {
-  CA: '',        // $WATER contract address. Empty = "coming soon"
-  X_URL: 'https://x.com/watercoinpf_',     // official X profile
-  BUY_URL: ''    // e.g. https://pump.fun/coin/<CA>. Empty = Buy button says "soon"
+  CA: 'FV23gQJYmnqSZtEkVCzVAzwS5YmSQcp7UuYSLVepump',     // $WATER contract address (same value as EXPECTED.mint in api/_lib/meter-core.js)
+  X_URL: 'https://x.com/watercoinpf_',                   // official X profile
+  BUY_URL: 'https://pump.fun/coin/FV23gQJYmnqSZtEkVCzVAzwS5YmSQcp7UuYSLVepump'
 };
 
 (() => {

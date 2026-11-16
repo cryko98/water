@@ -5,7 +5,8 @@
  *  settled  : donate.gg receipts settled to WaterAid America for $WATER  -> the ONLY input to the donated total
  *  pending  : creator vault + donation account balances on Solana         -> shown, never counted
  *
- * Before launch (EXPECTED.mint empty) it answers { prelaunch: true } without touching donate.gg or Solana.
+ * With no mint set it answers { prelaunch: true } without touching donate.gg or Solana.
+ * With the mint set but not trading yet, `onchain` is "not_created": settled stays at $0 and the vaults read as empty.
  * Failures are isolated: if the chain is down the settled total still publishes, and vice versa.
  * A refresh that is partial, inconsistent, or would rewrite already-counted history is rejected and the
  * last good reading stays published (marked stale once it ages).
@@ -63,6 +64,13 @@ async function refreshChain() {
     state.chainError = null;
     return true;
   } catch (e) {
+    if (e instanceof core.NotCreatedYet) {
+      // a clean answer from the chain: the coin is not trading yet. Not a failure, so no backoff.
+      state.chain = null;
+      state.chainAt = Date.now();
+      state.chainError = 'not_found';
+      return true;
+    }
     state.chainError = 'unavailable';
     console.error('[reservoir] chain refresh failed:', String(e.message).replace(/https?:\/\/\S+/g, '[redacted]'));
     return false;
@@ -99,6 +107,8 @@ function payload() {
     mint: core.EXPECTED.mint,
     generatedAt: new Date(now).toISOString(),
     charity: { name: core.EXPECTED.charityName, id: core.EXPECTED.charityId },
+    // 'live' once the mint's fee-sharing account exists on-chain, 'not_created' before the first trade
+    onchain: state.chain ? 'live' : state.chainError === 'not_found' ? 'not_created' : 'unknown',
     settled: state.settled && {
       ...state.settled,
       fetchedAt: state.settledAt ? new Date(state.settledAt).toISOString() : null,

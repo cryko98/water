@@ -154,3 +154,17 @@ test('bundled snapshot is valid and self-consistent', () => {
   const s = core.summarize(l);
   assert.equal(BigInt(s.grossUsdE6), BigInt(s.netUsdE6) + BigInt(s.feeUsdE6) + BigInt(s.tipUsdE6));
 });
+
+test('a mint that is not trading yet reads as NotCreatedYet, not as an RPC failure', async () => {
+  const rpc = async method => method === 'getMultipleAccounts' ? { context: { slot: 100 }, value: [null, null, null] } : 890880;
+  await assert.rejects(core.readChain(rpc), core.NotCreatedYet);
+});
+
+test('the configured mint is a valid address and matches the site config', () => {
+  if (!REAL_MINT) return;
+  const { address } = require('@solana/addresses');
+  assert.doesNotThrow(() => address(REAL_MINT));
+  const main = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', '..', 'main.js'), 'utf8');
+  assert.ok(main.includes(`CA: '${REAL_MINT}'`), 'main.js CONFIG.CA must equal EXPECTED.mint');
+  assert.ok(main.includes(`pump.fun/coin/${REAL_MINT}`), 'main.js BUY_URL must point at the same mint');
+});
