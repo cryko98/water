@@ -6,7 +6,7 @@
 // ---- edit these at launch ----
 const CONFIG = {
   CA: '',        // $WATER contract address. Empty = "coming soon"
-  X_URL: '',     // official X profile. Empty = X buttons say "coming soon"
+  X_URL: 'https://x.com/watercoinpf_',     // official X profile
   BUY_URL: ''    // e.g. https://pump.fun/coin/<CA>. Empty = Buy button says "soon"
 };
 
