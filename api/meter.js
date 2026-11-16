@@ -2,7 +2,7 @@
 /*
  * GET /api/meter — one shared, cached Reservoir reading for every visitor.
  *
- *  settled  : donate.gg receipts settled to WaterAid America for $WATER  -> the ONLY input to the donated total
+ *  settled  : donate.gg receipts for $WATER donations to WaterAid America -> the ONLY input to the donated total
  *  pending  : creator vault + donation account balances on Solana         -> shown, never counted
  *
  * With no mint set it answers { prelaunch: true } without touching donate.gg or Solana.
@@ -138,7 +138,12 @@ function payload() {
     // 'live' once the mint's fee-sharing account exists on-chain, 'not_created' before the first trade
     onchain: state.chain ? 'live' : state.chainError === 'not_found' ? 'not_created' : 'unknown',
     settled: state.settled && {
-      ...state.settled,
+      receipts: state.settled.receipts,
+      transactions: state.settled.transactions,
+      donatedUsdE6: state.settled.donatedUsdE6,
+      sourceLamports: state.settled.sourceLamports,
+      lastSettlement: state.settled.lastSettlement,
+      beneficiary: state.settled.beneficiary,
       fetchedAt: state.settledAt ? new Date(state.settledAt).toISOString() : null,
       source: state.settledSource,
       stale: now - state.settledAt > STALE_AFTER,

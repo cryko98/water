@@ -4,7 +4,7 @@
  *
  * The donated total is computed ONLY from donate.gg beneficiary receipts that are settled to WaterAid America
  * and attributed to $WATER:
- *     donated = sum(usdNetE6)   (USDC, net of donate.gg's processing fee)
+ *     donated = sum(usdGrossE6)   (the full USDC amount of each settled $WATER donation)
  * Unclaimed creator fees and pending donations are reported separately (in SOL) and never counted.
  * No live SOL price is involved, so a price move can't change an already-counted total.
  *
@@ -175,6 +175,7 @@ function summarize(ledger) {
   }
   return {
     receipts: ledger.size,
+    donatedUsdE6: gross.toString(),
     transactions: txs.size,
     netUsdE6: net.toString(),
     grossUsdE6: gross.toString(),

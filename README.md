@@ -27,11 +27,11 @@ so receipts from any other donation config are rejected.
 
 ## The Reservoir (settled donations, server-side)
 
-The donated total counts **only donations already settled to WaterAid America**, read from donate.gg's public
+The donated total counts **only $WATER donations already settled through donate.gg to WaterAid America**, read from donate.gg's public
 receipts API (`charities/584d2da9-adc3-4996-a12b-be4231e849f8/donations`, WaterAid America Inc., EIN 30-0181674):
 
 ```text
-donated = sum(usdNetE6 of settled $WATER receipts) / 1,000,000   (USDC, net of donate.gg's processing fee)
+donated = sum(usdGrossE6 of settled $WATER receipts) / 1,000,000   (full USDC amount of each donation)
 ```
 
 Same accounting rules as Foodcoin's Meal Meter: every page is read before publishing, receipts must match the mint,

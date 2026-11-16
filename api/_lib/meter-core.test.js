@@ -44,11 +44,12 @@ const pages = (...ps) => {
   return async () => ({ ok: true, status: 200, text: async () => JSON.stringify(ps[Math.min(i++, ps.length - 1)]) });
 };
 
-test('donated total uses net settled USD only (fees excluded), summed exactly', () => {
+test('donated total is the full settled USD of each donation, summed exactly', () => {
   const { ledger } = core.buildLedger([receipt({ net: '1049999', fee: '262500' }), receipt({ net: '1049999', fee: '262500' })]);
   const s = core.summarize(ledger);
   assert.equal(s.netUsdE6, '2099998');
   assert.equal(s.feeUsdE6, '525000');
+  assert.equal(s.donatedUsdE6, '2624998');
   assert.equal(s.meals, undefined);
 });
 

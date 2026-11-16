@@ -24,7 +24,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const els = {
-    live: $('[data-m-live]'), status: $('[data-m-status]'), receipts: $('[data-m-receipts]'), fees: $('[data-m-fees]'),
+    live: $('[data-m-live]'), status: $('[data-m-status]'), receipts: $('[data-m-receipts]'), solIn: $('[data-m-sol]'),
     last: $('[data-m-last]'), ca: $('[data-m-ca]'), updated: $('[data-m-updated]'), lock: $('[data-m-lock]'),
     tVault: $('[data-t-vault]'), tVaultLink: $('[data-t-vault-link]'), tPending: $('[data-t-pending]'),
     tPendingLink: $('[data-t-pending-link]'), tSent: $('[data-t-sent]'), tSentLink: $('[data-t-sent-link]'), tCrank: $('[data-t-crank]'),
@@ -174,7 +174,7 @@
   function renderPrelaunch() {
     setLive('is-pre', 'Awaiting launch');
     els.ca.textContent = 'Coming soon'; els.ca.removeAttribute('href');
-    for (const k of ['receipts', 'fees', 'last']) els[k].textContent = '—';
+    for (const k of ['receipts', 'solIn', 'last']) els[k].textContent = '—';
     els.tVault.textContent = '—'; els.tPending.textContent = '—'; els.tSent.textContent = '$0';
     els.updated.textContent = 'The reservoir opens the moment $WATER launches';
     animateTo(0);
@@ -204,20 +204,20 @@
     const incomingUsd = pendingSol && price ? pendingSol * price : 0;
 
     if (s) {
-      const usd = Math.floor(Number(BigInt(s.netUsdE6)) / 1e6);
+      const usd = Math.floor(Number(BigInt(s.donatedUsdE6)) / 1e6);
       if (shown > 0 && usd > target) pop('+$' + (usd - target).toLocaleString('en-US'));
       animateTo(usd);
-      setGoal(Number(BigInt(s.netUsdE6)) / 1e6, incomingUsd);
+      setGoal(Number(BigInt(s.donatedUsdE6)) / 1e6, incomingUsd);
       els.receipts.textContent = Number(s.receipts).toLocaleString('en-US');
-      els.fees.textContent = usdE6(s.feeUsdE6);
+      els.solIn.textContent = sol(s.sourceLamports);
       els.last.textContent = s.lastSettlement ? ago(s.lastSettlement.at) : 'None yet';
-      els.tSent.textContent = usdE6(s.netUsdE6);
+      els.tSent.textContent = usdE6(s.donatedUsdE6);
       setLink(els.tSentLink, s.lastSettlement && 'https://solscan.io/tx/' + s.lastSettlement.tx);
       els.tCrank.textContent = s.lastSettlement
-        ? `USDC received on-chain. Last settlement ${ago(s.lastSettlement.at)}`
-        : 'USDC received on-chain. This is what the reservoir counts';
+        ? `Paid out in USDC on-chain. Last donation ${ago(s.lastSettlement.at)}`
+        : 'Paid out in USDC on-chain. This is what the reservoir counts';
     } else {
-      for (const k of ['receipts', 'fees', 'last', 'tSent']) els[k].textContent = 'unavailable';
+      for (const k of ['receipts', 'solIn', 'last', 'tSent']) els[k].textContent = 'unavailable';
     }
 
     if (p) {
@@ -225,12 +225,9 @@
       els.tPending.textContent = p.donation ? sol(p.donation.pendingLamports) : sol('0');
       setLink(els.tVaultLink, p.accounts && 'https://solscan.io/account/' + (BigInt(p.ammVaultLamports) > 0n ? p.accounts.pumpswapVault : p.accounts.creatorVault));
       setLink(els.tPendingLink, p.donation && 'https://solscan.io/account/' + p.donation.address);
-      if (p.locked && s) {
-        const gross = BigInt(s.grossUsdE6), fee = BigInt(s.feeUsdE6);
-        const pct = gross > 0n ? Math.round(Number(fee * 10000n / gross) / 100) : null;
+      if (p.locked) {
         els.lock.hidden = false;
-        els.lock.textContent = `🔒 ${Math.round(p.shareBps / 100)}% of creator fees → donate.gg → WaterAid America · locked forever`
-          + (pct !== null ? ` · donate.gg's ${pct}% processing fee is deducted before settlement` : '');
+        els.lock.textContent = `🔒 ${Math.round(p.shareBps / 100)}% of creator rewards → donate.gg → WaterAid America · locked forever`;
       }
     } else if (d.onchain === 'not_created') {
       // the chain answered: this mint is not trading yet, so there is nothing in the vaults
