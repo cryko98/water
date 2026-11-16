@@ -65,6 +65,7 @@
       <span>Watercoin</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
+      <a href="#watch" data-scroll>Watch</a>
       <a href="#reservoir" data-scroll>Reservoir</a>
       <a href="#story" data-scroll>Story</a>
       <a href="#how" data-scroll>How it works</a>
@@ -102,7 +103,7 @@
         </p>
         <div class="hero-cta">
           <a href="#" class="btn btn-primary magnetic" data-buy-link><span>Buy $WATER</span><i>Soon</i></a>
-          <a href="#reservoir" class="btn btn-ghost magnetic" data-scroll><span>Check the reservoir</span></a>
+          <a href="#watch" class="btn btn-ghost magnetic" data-scroll data-watch-cta><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg><span>Watch the video</span><i>0:47</i></a>
         </div>
         <p class="hero-hint"><span class="hint-ring"></span>Touch the water</p>
       </div>
@@ -201,6 +202,47 @@
         <text class="wt wt-a"><textPath href="#wavePathA" data-marquee="1">Real liquidity ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺ Real liquidity ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺ Real liquidity ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺</textPath></text>
         <text class="wt wt-b"><textPath href="#wavePathB" data-marquee="-1">From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ </textPath></text>
       </svg>
+    </section>
+
+    <!-- ============ WATCH: the explainer ============ -->
+    <section class="watch" id="watch" data-theme="ink" aria-label="Explainer video">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-ink" data-wave data-w="1440" data-y="62" data-a="22" data-l="540" data-s="1.2" data-h="121"/>
+      </svg>
+      <div class="wt-glow" aria-hidden="true"></div>
+
+      <div class="wt-head">
+        <p class="label"><span>▶</span> Watch · 0:47</p>
+        <h2 data-split>Watch the <em>water flow.</em></h2>
+        <p class="wt-lead">From one trade to a tap that runs: where every $WATER reward goes, in 47 seconds.</p>
+      </div>
+
+      <div class="wt-stage">
+        <div class="wt-frame" data-hover>
+          <video class="wt-video" src="assets/explainer.mp4" poster="assets/explainer-poster.jpg" muted loop playsinline preload="none" disablepictureinpicture></video>
+          <div class="wt-shade" aria-hidden="true"></div>
+          <button class="wt-play" type="button" aria-label="Play the explainer with sound">
+            <span class="wt-btn" aria-hidden="true">
+              <i></i><i></i><i></i>
+              <svg viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg>
+            </span>
+            <span class="wt-cta"><b data-wt-label>Play with sound</b><small>0:47 · narrated · captions on</small></span>
+          </button>
+          <button class="wt-mute" type="button" aria-label="Mute" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path data-wt-wave d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="wt-bar" aria-hidden="true"><span></span></div>
+        </div>
+
+        <ol class="wt-chapters" aria-label="Chapters">
+          <li><button type="button" data-t="0"><time>0:00</time><span>The problem</span></button></li>
+          <li><button type="button" data-t="8"><time>0:08</time><span>Watercoin</span></button></li>
+          <li><button type="button" data-t="12.5"><time>0:12</time><span>How it flows</span></button></li>
+          <li><button type="button" data-t="22"><time>0:22</time><span>Volume → water</span></button></li>
+          <li><button type="button" data-t="32.2"><time>0:32</time><span>Public receipts</span></button></li>
+          <li><button type="button" data-t="35.5"><time>0:35</time><span>From Foodcoin</span></button></li>
+        </ol>
+      </div>
     </section>
 
     <!-- ============ LORE ============ -->
@@ -629,6 +671,7 @@
     setTimeout(function () { if (!window.__wcBooted) window.__wcRescue(); }, 8000);
   </script>
   <script src="meter.js"></script>
+  <script src="watch.js"></script>
   <script src="water.js"></script>
   <script src="drops.js"></script>
   <script src="assets/vendor/gsap.min.js"></script>

@@ -313,6 +313,16 @@ const CONFIG = {
     }
   });
 
+  /* ---------- watch: the frame tilts up out of the water as it arrives ---------- */
+  if ($('.wt-frame')) {
+    gsap.fromTo('.wt-frame', { scale: .78, rotateX: 18, y: 90 }, {
+      scale: 1, rotateX: 0, y: 0, ease: 'none',
+      scrollTrigger: { trigger: '.wt-stage', start: 'top 98%', end: 'top 22%', scrub: .6 }
+    });
+    gsap.from('.wt-chapters li', { y: 34, opacity: 0, duration: .9, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: '.wt-chapters', start: 'top 94%' } });
+    gsap.from('.wt-lead', { y: 24, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.wt-head', start: 'top 80%' } });
+  }
+
   /* ---------- story: words fill in as you scroll ---------- */
   const story = $('[data-words]');
   if (story) {
