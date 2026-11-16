@@ -20,7 +20,9 @@ const snapshot = require('./_data/settled-snapshot.json');
 
 const SETTLED_TTL = 60 * 1000;   // re-read receipts at most once a minute per instance
 const CHAIN_TTL = 20 * 1000;
+const PRICE_TTL = 60 * 1000;
 const STALE_AFTER = 5 * 60 * 1000;
+const WSOL = 'So11111111111111111111111111111111111111112';
 
 const RPC_URLS = (process.env.SOLANA_RPC_URLS || 'https://api.mainnet-beta.solana.com,https://solana-rpc.publicnode.com')
   .split(',').map(s => s.trim()).filter(Boolean);
@@ -31,8 +33,33 @@ const state = {
   committed: core.ledgerFromJson(snapshot.receipts),
   settled: null, settledAt: 0, settledSource: 'snapshot', settledError: null,
   chain: null, chainAt: 0, chainError: null, lastSlot: 0,
+  price: null, priceAt: 0,
   inflight: null, backoffUntil: 0, failures: 0
 };
+
+// SOL/USD, for DISPLAY of not-yet-donated SOL only. Never used for the settled total.
+const PRICE_SOURCES = [
+  ['jupiter', 'https://lite-api.jup.ag/price/v3?ids=' + WSOL, j => j[WSOL] && j[WSOL].usdPrice],
+  ['coingecko', 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', j => j.solana && j.solana.usd]
+];
+async function refreshPrice() {
+  for (const [source, url, pick] of PRICE_SOURCES) {
+    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 6000);
+    try {
+      const r = await fetch(url, { headers: { Accept: 'application/json' }, signal: ctrl.signal });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const usd = Number(pick(await r.json()));
+      if (!Number.isFinite(usd) || usd < 1 || usd > 100000) throw new Error('implausible price');
+      state.price = { solUsd: usd, source };
+      state.priceAt = Date.now();
+      return true;
+    } catch (e) {
+      console.error('[reservoir] price from', source, 'failed:', e.message);
+    } finally { clearTimeout(timer); }
+  }
+  state.priceAt = Date.now() - PRICE_TTL / 2;   // retry in ~30 s; the last good price stays published
+  return true;                                   // a missing price never triggers the refresh backoff
+}
 state.settled = core.summarize(state.committed);
 state.settledAt = Date.parse(snapshot.generatedAt) || 0;
 
@@ -84,6 +111,7 @@ async function refresh() {
   const jobs = [];
   if (now - state.settledAt > SETTLED_TTL || state.settledSource === 'snapshot') jobs.push(refreshSettled());
   if (now - state.chainAt > CHAIN_TTL) jobs.push(refreshChain());
+  if (now - state.priceAt > PRICE_TTL) jobs.push(refreshPrice());
   if (!jobs.length) return;
   state.inflight = Promise.allSettled(jobs).then(results => {
     const ok = results.every(r => r.status === 'fulfilled' && r.value);
@@ -122,6 +150,8 @@ function payload() {
       stale: now - state.chainAt > STALE_AFTER,
       error: state.chainError
     },
+    // display-only conversion for SOL that has not been donated yet
+    price: state.price && { ...state.price, fetchedAt: new Date(state.priceAt).toISOString(), stale: now - state.priceAt > STALE_AFTER },
     errors: { settled: state.settledError, chain: state.chain ? state.chainError : (state.chainError || 'unavailable') }
   };
 }

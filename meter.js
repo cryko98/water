@@ -63,22 +63,54 @@
   const odo = makeOdometer($('[data-odo]'));
   odo.set(0);
 
-  /* ---------- tank level (the wave engine in main.js reads data-y) ---------- */
+  /* ---------- tank: settled water in front, incoming (not yet donated) water behind it, lighter ----------
+     The wave engine in main.js reads data-y. */
   const TANK_EMPTY = 392, TANK_FULL = 34;
-  let tankLevel = 0, tankShown = 0, tankAnim = 0;
-  function tankTo(level) {
-    tankLevel = Math.max(0, Math.min(1, level));
+  const tankFront = document.querySelector('.tank-front'), tankBack = document.querySelector('.tank-back');
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const lv = { front: 0, back: 0 }, lvShown = { front: 0, back: 0 };
+  let tankAnim = 0;
+  function tankTo(front, back = front) {
+    lv.front = clamp01(front); lv.back = Math.max(lv.front, clamp01(back));
     if (!inView) return;
     cancelAnimationFrame(tankAnim);
-    const from = tankShown, t0 = performance.now(), dur = reduce ? 1 : 2200;
+    const from = { ...lvShown }, t0 = performance.now(), dur = reduce ? 1 : 2200;
+    const yOf = l => (TANK_EMPTY - (TANK_EMPTY - TANK_FULL) * l).toFixed(2);
     const step = now => {
       const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-      tankShown = from + (tankLevel - from) * e;
-      const y = TANK_EMPTY - (TANK_EMPTY - TANK_FULL) * tankShown;
-      for (const w of els.tankWaves) w.dataset.y = y.toFixed(2);
+      lvShown.front = from.front + (lv.front - from.front) * e;
+      lvShown.back = from.back + (lv.back - from.back) * e;
+      if (tankFront) tankFront.dataset.y = yOf(lvShown.front);
+      if (tankBack) tankBack.dataset.y = yOf(lvShown.back);
       if (k < 1) tankAnim = requestAnimationFrame(step);
     };
     tankAnim = requestAnimationFrame(step);
+  }
+
+  /* ---------- "pouring next": SOL collected but not donated yet ---------- */
+  const pend = { wrap: $('[data-p-wrap]'), sol: $('[data-p-sol]'), usd: $('[data-p-usd]'), rate: $('[data-p-rate]'), foot: $('[data-p-foot]') };
+  let pShown = 0, pTarget = null, pPrice = null, pAnim = 0;
+  const fmtSol = x => x.toLocaleString('en-US', { minimumFractionDigits: x >= 1000 ? 1 : 3, maximumFractionDigits: x >= 1000 ? 1 : 3 });
+  const fmtUsd = x => '$' + Math.round(x).toLocaleString('en-US');
+  function paintPending(x) {
+    pend.sol.textContent = fmtSol(x);
+    pend.usd.textContent = pPrice ? fmtUsd(x * pPrice) : '—';
+  }
+  function pendingTo(solAmount, price) {
+    pPrice = price || pPrice;
+    const first = pTarget === null;
+    pTarget = solAmount;
+    pend.wrap.classList.toggle('is-empty', solAmount <= 0);
+    if (!inView || reduce) { if (!inView && !first) return; pShown = solAmount; paintPending(solAmount); return; }
+    cancelAnimationFrame(pAnim);
+    const from = pShown, t0 = performance.now(), dur = from === 0 ? 2400 : 1400;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      pShown = from + (solAmount - from) * e;
+      paintPending(pShown);
+      if (k < 1) pAnim = requestAnimationFrame(step);
+    };
+    pAnim = requestAnimationFrame(step);
   }
 
   /* ---------- odometer tween (no GSAP): easeOutCubic ---------- */
@@ -98,7 +130,7 @@
     anim = requestAnimationFrame(step);
   }
   new IntersectionObserver(([e]) => {
-    if (e.isIntersecting && !inView) { inView = true; animateTo(target); tankTo(tankLevel); }
+    if (e.isIntersecting && !inView) { inView = true; animateTo(target); tankTo(lv.front, lv.back); if (pTarget !== null) pendingTo(pTarget); }
   }, { threshold: 0.2 }).observe(card);
 
   function pop(text) {
@@ -126,13 +158,15 @@
   const setLink = (a, href) => { if (href) { a.href = href; a.classList.remove('off'); } else a.classList.add('off'); };
   const setLive = (cls, text) => { els.live.classList.remove('is-idle', 'is-error', 'is-pre'); if (cls) els.live.classList.add(cls); els.status.textContent = text; };
 
-  function setGoal(usd) {
+  function setGoal(usd, incomingUsd = 0) {
     const g = GOALS.find(x => usd < x.usd) || GOALS[GOALS.length - 1];
-    const pct = Math.min(100, usd / g.usd * 100);
+    const pct = Math.min(100, usd / g.usd * 100), inPct = Math.max(0, Math.min(100 - pct, incomingUsd / g.usd * 100));
+    const f = p => (p < 10 && p > 0 ? p.toFixed(1) : Math.floor(p));
     els.goalName.textContent = g.name;
-    els.goalPct.textContent = `${pct < 10 && pct > 0 ? pct.toFixed(1) : Math.floor(pct)}% of $${g.usd.toLocaleString('en-US')}`;
+    els.goalPct.textContent = `${f(pct)}% of $${g.usd.toLocaleString('en-US')}` + (inPct >= .1 ? ` · +${f(inPct)}% on the way` : '');
     // keep a visible splash in the tank even at zero, so it never looks broken
-    tankTo(Math.max(.035, pct / 100));
+    const front = Math.max(.035, pct / 100);
+    tankTo(front, front + inPct / 100);
   }
 
   /* ---------- render ---------- */
@@ -145,6 +179,7 @@
     els.updated.textContent = 'The reservoir opens the moment $WATER launches';
     animateTo(0);
     setGoal(0);
+    pend.sol.textContent = '—'; pend.usd.textContent = '—';
   }
 
   function render(d) {
@@ -154,11 +189,25 @@
     els.ca.textContent = short(d.mint);
     els.ca.href = 'https://solscan.io/token/' + d.mint;
 
+    // not donated yet = unclaimed creator fees (bonding curve + PumpSwap) + SOL already in the donation pipe
+    const price = d.price && d.price.solUsd;
+    let pendingSol = null;
+    if (p) pendingSol = Number(BigInt(p.creatorVaultLamports) + BigInt(p.ammVaultLamports) + BigInt(p.donation ? p.donation.pendingLamports : '0')) / 1e9;
+    else if (d.onchain === 'not_created') pendingSol = 0;
+    if (pendingSol !== null) {
+      pendingTo(pendingSol, price);
+      pend.rate.textContent = price ? `at $${price.toFixed(2)} per SOL · estimate, not yet donated` : 'USD estimate unavailable right now';
+      pend.foot.textContent = d.onchain === 'not_created'
+        ? 'Opens with the first trade. Creator rewards collect here before they are sent to WaterAid America.'
+        : 'Collected from trading, waiting to be claimed, converted to USDC and paid to WaterAid America. It joins the total above once it settles.';
+    } else { pend.sol.textContent = '—'; pend.usd.textContent = '—'; }
+    const incomingUsd = pendingSol && price ? pendingSol * price : 0;
+
     if (s) {
       const usd = Math.floor(Number(BigInt(s.netUsdE6)) / 1e6);
       if (shown > 0 && usd > target) pop('+$' + (usd - target).toLocaleString('en-US'));
       animateTo(usd);
-      setGoal(Number(BigInt(s.netUsdE6)) / 1e6);
+      setGoal(Number(BigInt(s.netUsdE6)) / 1e6, incomingUsd);
       els.receipts.textContent = Number(s.receipts).toLocaleString('en-US');
       els.fees.textContent = usdE6(s.feeUsdE6);
       els.last.textContent = s.lastSettlement ? ago(s.lastSettlement.at) : 'None yet';

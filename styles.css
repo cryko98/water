@@ -333,6 +333,25 @@ section, footer { position: relative; }
 .res-sub a { font-weight: 700; }
 .res-pop { position: absolute; left: 0; top: 0; padding: 8px 14px; border-radius: 99px; background: var(--blue); color: var(--cream); font-weight: 800; pointer-events: none; }
 
+/* not yet donated: the big "pouring next" block */
+.res-pending { position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 14px; padding: clamp(22px, 2.6vw, 34px); border-radius: 30px; background: var(--blue); color: var(--cream); box-shadow: 0 36px 70px -34px rgba(19,57,244,.75); }
+.rp-waves { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.rp-waves .a { fill: rgba(142,174,255,.22); } .rp-waves .b { fill: rgba(5,12,58,.28); }
+.rp-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px; }
+.rp-live { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 99px; background: var(--cream); color: var(--blue); font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.rp-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); animation: ping 1.6s infinite; box-shadow: 0 0 0 0 rgba(19,57,244,.6); }
+.rp-note { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .8; }
+.rp-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 28px; }
+.rp-sol { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 0; min-width: 0; }
+.rp-sol b { font-weight: 900; font-stretch: 125%; font-size: clamp(54px, 6.6vw, 108px); line-height: .95; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.rp-sol span { font-family: var(--f-mono); font-weight: 600; font-size: clamp(18px, 1.6vw, 26px); letter-spacing: .1em; opacity: .85; }
+.rp-usd { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0; }
+.rp-usd span { font-family: var(--f-serif); font-style: italic; font-size: clamp(30px, 3vw, 48px); color: var(--sky); }
+.rp-usd b { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-size: clamp(40px, 4.2vw, 68px); line-height: 1; color: var(--sky); font-variant-numeric: tabular-nums; }
+.rp-usd small { flex-basis: 100%; font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+.rp-foot { font-size: 14px; opacity: .82; max-width: 60ch; }
+.res-pending.is-empty .rp-live i { animation: none; opacity: .4; }
+
 .res-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
 .res-stats div { padding: 14px 16px; border-radius: 18px; background: rgba(19,57,244,.07); }
 .res-stats dt { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
@@ -627,6 +646,8 @@ section, footer { position: relative; }
   .wt-mute { width: 42px; height: 42px; right: 12px; top: 12px; }
   .wt-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .wt-chapters button { padding: 12px 14px; }
+  .rp-sol b { font-size: clamp(38px, 11vw, 54px); }
+  .rp-usd b { font-size: clamp(32px, 9vw, 44px); }
   .depth { display: none; }
   .pill { display: none; }
   .hero { padding-top: 96px; padding-bottom: 28px; }
