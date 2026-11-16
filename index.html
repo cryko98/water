@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watercoin ($WATER) — Make it rain</title>
+  <meta name="description" content="$WATER is a Solana memecoin from the team behind Foodcoin. Creator rewards from every trade flow to WaterAid America for clean water, toilets and hygiene.">
+  <meta name="theme-color" content="#1339F4">
+  <meta property="og:title" content="Watercoin ($WATER) — Make it rain">
+  <meta property="og:description" content="After $70,000+ donated with Foodcoin, chapter two: a Solana memecoin that turns trading volume into clean water through WaterAid America.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="assets/banner.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-loading">
+
+  <!-- ============ PRELOADER: the glass fills ============ -->
+  <div class="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <svg class="pl-drop" viewBox="0 0 200 260">
+        <defs>
+          <clipPath id="plClip"><path d="M100 8C100 8 22 112 22 168a78 78 0 0 0 156 0C178 112 100 8 100 8Z"/></clipPath>
+        </defs>
+        <path class="pl-outline" d="M100 8C100 8 22 112 22 168a78 78 0 0 0 156 0C178 112 100 8 100 8Z"/>
+        <g clip-path="url(#plClip)">
+          <path class="pl-back" data-wave data-w="200" data-y="262" data-a="7" data-l="120" data-s="1.6" data-h="270" data-p="1.4"/>
+          <path class="pl-front" data-wave data-w="200" data-y="262" data-a="6" data-l="90" data-s="-2.2" data-h="270"/>
+        </g>
+      </svg>
+      <div class="pl-word">Filling the glass</div>
+      <div class="pl-count"><span>000</span>%</div>
+    </div>
+    <div class="pl-flood"><svg viewBox="0 0 1440 200" preserveAspectRatio="none"><path data-wave data-w="1440" data-y="70" data-a="30" data-l="520" data-s="4" data-h="201"/></svg></div>
+  </div>
+
+  <!-- ============ CHROME ============ -->
+  <div class="depth" aria-hidden="true">
+    <span class="depth-label">Depth</span>
+    <div class="depth-tube"><span class="depth-fill"></span></div>
+    <span class="depth-val"><b data-depth>0</b> m</span>
+  </div>
+  <div class="cursor" aria-hidden="true"><span></span></div>
+  <canvas id="bubbles" aria-hidden="true"></canvas>
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <header class="nav">
+    <a href="#top" class="brand" data-scroll>
+      <img src="assets/apple-touch-icon.png" alt="" width="40" height="40">
+      <span>Watercoin</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#reservoir" data-scroll>Reservoir</a>
+      <a href="#story" data-scroll>Story</a>
+      <a href="#how" data-scroll>How it works</a>
+      <a href="#well" data-scroll>The well</a>
+      <a href="#token" data-scroll>Token</a>
+      <a href="#roadmap" data-scroll>Roadmap</a>
+    </nav>
+    <div class="nav-actions">
+      <button type="button" class="pill" data-ca-pill aria-label="Copy contract address"><span class="dot"></span><span data-ca-pill-text>CA soon</span></button>
+      <a href="#" class="x-btn magnetic" data-x-link aria-label="Watercoin on X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO: interactive water surface ============ -->
+    <section class="hero" data-theme="blue">
+      <canvas id="water" aria-hidden="true"></canvas>
+      <div class="hero-fallback" aria-hidden="true"></div>
+
+      <div class="hero-top">
+        <p class="eyebrow"><span class="chip">Chapter II</span> A Solana memecoin for a thirsty world</p>
+      </div>
+
+      <h1 class="hero-title" aria-label="Make it rain.">
+        <span class="line"><span class="w">Make</span> <span class="w">it</span></span>
+        <span class="line"><span class="w em">rain.</span></span>
+      </h1>
+
+      <div class="hero-bottom">
+        <p class="hero-copy">
+          <strong>$WATER</strong> turns trading volume into clean water. Creator rewards flow on-chain through donate.gg to <strong>WaterAid America</strong>, from the team that already gave <strong>$70,000+</strong> with Foodcoin.
+        </p>
+        <div class="hero-cta">
+          <a href="#" class="btn btn-primary magnetic" data-buy-link><span>Buy $WATER</span><i>Soon</i></a>
+          <a href="#reservoir" class="btn btn-ghost magnetic" data-scroll><span>Check the reservoir</span></a>
+        </div>
+        <p class="hero-hint"><span class="hint-ring"></span>Touch the water</p>
+      </div>
+
+      <div class="drip" aria-hidden="true"><span></span></div>
+    </section>
+
+    <!-- ============ THE RESERVOIR (live donation tracker) ============ -->
+    <section class="reservoir" id="reservoir" data-theme="cream" aria-label="Live donation tracker">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-cream" data-wave data-w="1440" data-y="70" data-a="22" data-l="480" data-s="0.8" data-h="121"/>
+      </svg>
+
+      <div class="res-head">
+        <p class="label"><span>Live</span> The reservoir</p>
+        <h2 data-split>Every drop, <em>on the record.</em></h2>
+      </div>
+
+      <div class="res-card" data-hover>
+        <div class="tank-wrap">
+          <svg class="tank" viewBox="0 0 300 420" aria-hidden="true">
+            <defs>
+              <clipPath id="tankClip"><rect x="18" y="18" width="264" height="384" rx="44"/></clipPath>
+              <linearGradient id="tankWater" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2E55FF"/><stop offset="1" stop-color="#0B22A6"/>
+              </linearGradient>
+            </defs>
+            <rect class="tank-body" x="18" y="18" width="264" height="384" rx="44"/>
+            <g clip-path="url(#tankClip)">
+              <path class="tank-back" data-wave data-tank data-w="300" data-y="390" data-a="8" data-l="170" data-s="1.4" data-h="420" data-p="2"/>
+              <path class="tank-front" data-wave data-tank data-w="300" data-y="390" data-a="6" data-l="120" data-s="-1.9" data-h="420"/>
+              <g class="tank-bubbles"></g>
+            </g>
+            <g class="tank-ticks">
+              <line x1="252" y1="114" x2="282" y2="114"/><line x1="262" y1="210" x2="282" y2="210"/>
+              <line x1="252" y1="306" x2="282" y2="306"/>
+            </g>
+            <rect class="tank-glass" x="18" y="18" width="264" height="384" rx="44"/>
+            <path class="tank-shine" d="M54 70v220"/>
+          </svg>
+          <div class="tank-goal">
+            <span>Next target</span>
+            <b data-goal-name>Beat Foodcoin</b>
+            <small data-goal-pct>0% of $70,000</small>
+          </div>
+        </div>
+
+        <div class="res-data">
+          <div class="res-top">
+            <span class="live" data-m-live><i></i><b data-m-status>Connecting</b></span>
+            <a class="res-charity" href="https://www.donate.gg/charities/water-aid" target="_blank" rel="noopener">WaterAid America on donate.gg ↗</a>
+          </div>
+
+          <div class="res-main">
+            <div class="odo-row"><span class="odo-cur">$</span><div class="odo" data-odo aria-live="polite" aria-label="Dollars settled to WaterAid America"></div></div>
+            <p class="res-sub">settled to <a href="https://www.wateraid.org/us" target="_blank" rel="noopener">WaterAid America</a> from $WATER creator rewards, net of donate.gg's processing fee</p>
+          </div>
+
+          <dl class="res-stats">
+            <div><dt>Settled receipts</dt><dd data-m-receipts>—</dd></div>
+            <div><dt>Processing fees (not counted)</dt><dd data-m-fees>—</dd></div>
+            <div><dt>Last settlement</dt><dd data-m-last>—</dd></div>
+          </dl>
+
+          <ol class="trail" data-trail>
+            <li>
+              <span class="t-step">1</span>
+              <div class="t-body"><b>Creator vault</b><small>Trading fees collecting. Not counted yet</small></div>
+              <span class="t-amt" data-t-vault>—</span>
+              <a class="t-link off" data-t-vault-link href="#" target="_blank" rel="noopener">View ↗</a>
+            </li>
+            <li>
+              <span class="t-step">2</span>
+              <div class="t-body"><b>Converting to USDC</b><small>In the donation pipe. Not counted yet</small></div>
+              <span class="t-amt" data-t-pending>—</span>
+              <a class="t-link off" data-t-pending-link href="#" target="_blank" rel="noopener">View ↗</a>
+            </li>
+            <li>
+              <span class="t-step">3</span>
+              <div class="t-body"><b>Settled to WaterAid</b><small data-t-crank>USDC received on-chain. This is what the reservoir counts</small></div>
+              <span class="t-amt" data-t-sent>—</span>
+              <a class="t-link off" data-t-sent-link href="#" target="_blank" rel="noopener">Tx ↗</a>
+            </li>
+          </ol>
+          <p class="lock" data-m-lock hidden></p>
+          <p class="res-meta"><span>Contract</span><a data-m-ca href="#" target="_blank" rel="noopener">Coming soon</a><span class="sep">·</span><b data-m-updated>Reading settled donations…</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WAVE MARQUEE ============ -->
+    <section class="waves-band" aria-hidden="true">
+      <svg viewBox="0 0 1440 300" preserveAspectRatio="xMidYMid slice">
+        <path id="wavePathA" d="M-200 100 C 40 30, 280 30, 520 100 S 1000 170, 1240 100 S 1720 30, 1960 100" fill="none"/>
+        <path id="wavePathB" d="M-200 196 C 40 126, 280 126, 520 196 S 1000 266, 1240 196 S 1720 126, 1960 196" fill="none"/>
+        <text class="wt wt-a"><textPath href="#wavePathA" data-marquee="1">Make it rain ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺ Make it rain ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺ Make it rain ✺ $WATER ✺ Clean water is not a luxury ✺ One trade, one drop ✺</textPath></text>
+        <text class="wt wt-b"><textPath href="#wavePathB" data-marquee="-1">From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ From the Foodcoin team ≈ Built on Solana ≈ Creator rewards → WaterAid America ≈ Proof on-chain ≈ </textPath></text>
+      </svg>
+    </section>
+
+    <!-- ============ LORE ============ -->
+    <section class="story" id="story" data-theme="ink">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-ink" data-wave data-w="1440" data-y="66" data-a="20" data-l="520" data-s="-1" data-h="121"/>
+      </svg>
+      <p class="label"><span>01</span> The story</p>
+      <p class="story-text" data-words>
+        Last season our team launched <em class="hl">Foodcoin.</em> Together with its holders we sent <em class="hl">more than $70,000</em> to feed hungry families. We said we would, and we did. Then we asked what comes before food. The answer is simple: <em class="hl">water.</em> One in four people on Earth still can't count on safe water at home. So this time we're helping the thirsty.
+      </p>
+
+      <div class="chapters">
+        <article class="chapter done" data-hover>
+          <div class="ch-top"><span class="ch-n">Chapter I</span><span class="ch-tag">Closed ✓</span></div>
+          <h3>$FOOD <em>vs hunger</em></h3>
+          <p class="ch-big">$70,000+</p>
+          <p class="ch-cap">donated to feed families who couldn't afford food, through Feeding America.</p>
+          <a class="ch-link" href="https://foodcoin.site" target="_blank" rel="noopener">foodcoin.site ↗</a>
+        </article>
+        <div class="ch-arrow" aria-hidden="true">
+          <svg viewBox="0 0 120 40"><path d="M2 20c18-14 30-14 48 0s30 14 48 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M104 10l12 10-12 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <article class="chapter now" data-hover>
+          <div class="ch-top"><span class="ch-n">Chapter II</span><span class="ch-tag live-tag"><i></i>Pouring now</span></div>
+          <h3>$WATER <em>vs thirst</em></h3>
+          <p class="ch-big">WaterAid</p>
+          <p class="ch-cap">Creator rewards go to WaterAid America: clean water, toilets and hygiene in the world's poorest communities.</p>
+          <a class="ch-link" href="https://www.wateraid.org/us" target="_blank" rel="noopener">wateraid.org/us ↗</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ THE THIRST INDEX (pinned) ============ -->
+    <section class="thirst" data-theme="ink" aria-label="Water crisis statistics">
+      <div class="th-head">
+        <p class="label"><span>02</span> The thirst index</p>
+        <p class="th-index"><b>01</b> / 06</p>
+      </div>
+
+      <div class="glass-wrap" aria-hidden="true">
+        <svg class="glass" viewBox="0 0 320 420">
+          <defs>
+            <clipPath id="glassClip"><path d="M40 30h240l-30 360a22 22 0 0 1-22 20H92a22 22 0 0 1-22-20z"/></clipPath>
+          </defs>
+          <g clip-path="url(#glassClip)">
+            <path class="g-back" data-wave data-glass data-w="320" data-y="60" data-a="9" data-l="160" data-s="1.5" data-h="430" data-p="2.2"/>
+            <path class="g-front" data-wave data-glass data-w="320" data-y="60" data-a="7" data-l="110" data-s="-2.1" data-h="430"/>
+          </g>
+          <path class="g-outline" d="M40 30h240l-30 360a22 22 0 0 1-22 20H92a22 22 0 0 1-22-20z"/>
+          <path class="g-shine" d="M76 70l22 300"/>
+        </svg>
+        <p class="glass-cap" data-glass-cap>Full glass</p>
+      </div>
+
+      <div class="th-items">
+        <div class="stat" data-to="2100000000">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">people, 1 in 4 worldwide, still lack safely managed drinking water.</p>
+          <p class="stat-src">WHO &amp; UNICEF JMP · 2025</p>
+        </div>
+        <div class="stat" data-to="106000000">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">people drink directly from untreated surface water: rivers, lakes and ponds.</p>
+          <p class="stat-src">WHO &amp; UNICEF JMP · 2025</p>
+        </div>
+        <div class="stat" data-to="3400000000">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">people lack safely managed sanitation. 354 million still have no toilet at all.</p>
+          <p class="stat-src">WHO &amp; UNICEF JMP · 2025</p>
+        </div>
+        <div class="stat" data-to="1700000000">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">people lack basic hygiene at home. 611 million have no handwashing facility at all.</p>
+          <p class="stat-src">WHO &amp; UNICEF JMP · 2025</p>
+        </div>
+        <div class="stat" data-to="30" data-suffix="+ min">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">a day that many women and girls in sub-Saharan Africa and Southern Asia spend fetching water.</p>
+          <p class="stat-src">WHO &amp; UNICEF JMP · 2025</p>
+        </div>
+        <div class="stat" data-to="1000000">
+          <div class="stat-num"><span class="n">0</span></div>
+          <p class="stat-cap">people a year are estimated to die from diarrhoea linked to unsafe water, sanitation and hygiene.</p>
+          <p class="stat-src">World Health Organization · 2023</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS (horizontal, a pipe) ============ -->
+    <section class="how" id="how" data-theme="cream">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-cream" data-wave data-w="1440" data-y="64" data-a="20" data-l="500" data-s="1" data-h="121"/>
+      </svg>
+      <div class="how-pin">
+        <div class="how-track">
+          <div class="h-intro">
+            <p class="label"><span>03</span> How it works</p>
+            <h2 data-split>A coin with <em>plumbing.</em></h2>
+            <p class="h-lead">A memecoin can't dig a well by itself. But it can make sure the money it generates flows somewhere that does. No middleman, no "we'll donate later".</p>
+          </div>
+
+          <article class="h-card">
+            <div class="h-top"><span class="h-num">01</span>
+              <svg class="h-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34l10-10 7 7 15-15M30 16h10v10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div><h3>Trade</h3><p>Every buy and sell of $WATER on Solana generates creator rewards. Volume is the rainfall.</p></div>
+          </article>
+
+          <article class="h-card">
+            <div class="h-top"><span class="h-num">02</span>
+              <svg class="h-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 18h14a6 6 0 0 1 6 6v18M26 30h16M6 12v12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 36c0 3-2 5-4 5s-4-2-4-5 4-8 4-8 4 5 4 8z" fill="currentColor"/></svg>
+            </div>
+            <div><h3>Flow</h3><p>Creator rewards are routed on-chain through donate.gg and converted to USDC. Locked in, automatic.</p></div>
+          </article>
+
+          <article class="h-card">
+            <div class="h-top"><span class="h-num">03</span>
+              <svg class="h-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6s-12 14-12 22a12 12 0 0 0 24 0C36 20 24 6 24 6z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M18 30a6 6 0 0 0 6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            </div>
+            <div><h3>Pour</h3><p>The USDC settles to WaterAid America, which works with local partners on clean water, toilets and hygiene.</p></div>
+          </article>
+
+          <article class="h-card">
+            <div class="h-top"><span class="h-num">04</span>
+              <svg class="h-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="6" width="28" height="36" rx="3" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 16h16M16 23h16M16 30h9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M29 33l3 3 6-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div><h3>Prove</h3><p>Every settled receipt is public. The Reservoir reads them live and shows the full trail, nothing hidden.</p></div>
+          </article>
+
+          <div class="h-outro"><p>Volume in.<br><em>Water out.</em></p></div>
+        </div>
+
+        <div class="pipe" aria-hidden="true">
+          <div class="pipe-tube"><span class="pipe-water"></span></div>
+          <div class="pipe-drop"></div>
+          <div class="pipe-labels"><span>Trade</span><span>Flow</span><span>Pour</span><span>Prove</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THE WELL (pinned scene) ============ -->
+    <section class="well" id="well" data-theme="cream" aria-label="A well is drilled as you scroll">
+      <div class="wl-top">
+        <p class="label"><span>04</span> The well</p>
+        <div class="wl-heads">
+          <h2 class="wl-head">Dry ground.</h2>
+          <h2 class="wl-head">Every trade digs <em>deeper.</em></h2>
+          <h2 class="wl-head">Until we hit <em>water.</em></h2>
+          <h2 class="wl-head">Then it just <em>flows.</em></h2>
+        </div>
+      </div>
+
+      <div class="wl-stage">
+        <svg class="wl-svg" viewBox="0 0 1200 640" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFE7A6"/><stop offset="1" stop-color="#FEF1C4"/>
+            </linearGradient>
+            <linearGradient id="aquifer" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2B57FF"/><stop offset="1" stop-color="#0A1D8C"/>
+            </linearGradient>
+            <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2" fill="#000" opacity=".12"/><circle cx="15" cy="14" r="1.5" fill="#000" opacity=".1"/></pattern>
+            <clipPath id="pipeClip"><rect x="588" y="170" width="24" height="430"/></clipPath>
+            <clipPath id="canClip"><rect x="0" y="0" width="200" height="80"/></clipPath>
+          </defs>
+
+          <!-- sky + sun -->
+          <rect width="1200" height="200" fill="url(#sky)"/>
+          <g class="sun"><circle cx="1010" cy="70" r="40" fill="#FFC94A"/><circle class="sun-halo" cx="1010" cy="70" r="64" fill="#FFC94A" opacity=".25"/></g>
+          <!-- heat shimmer lines -->
+          <g class="heat" stroke="#E6B85C" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6">
+            <path d="M160 120c10-8 20 8 30 0s20 8 30 0"/><path d="M300 90c10-8 20 8 30 0s20 8 30 0"/><path d="M860 130c10-8 20 8 30 0s20 8 30 0"/>
+          </g>
+          <!-- huts -->
+          <g class="village" fill="#0B1D7A">
+            <path d="M150 200v-46l40-30 40 30v46z"/><path d="M262 200v-34l30-24 30 24v34z"/>
+            <path d="M840 200v-40l36-28 36 28v40z"/><path d="M940 200v-30l26-20 26 20v30z"/>
+            <rect x="182" y="174" width="16" height="26" fill="#FEF1C4"/><rect x="868" y="176" width="16" height="24" fill="#FEF1C4"/>
+          </g>
+
+          <!-- strata -->
+          <path d="M0 196h1200v84H0z" fill="#E9C77E"/>
+          <path d="M0 270c120 14 240-10 360 4s240 18 360 0 240-16 480 2v96H0z" fill="#D9A95C"/>
+          <path d="M0 360c140-12 260 14 400 0s260-16 400 2 280 10 400-4v90H0z" fill="#B8823F"/>
+          <path d="M0 440c160 10 300-12 440 0s300 14 440-2 220-8 320 4v80H0z" fill="#8E5F2C"/>
+          <rect y="196" width="1200" height="324" fill="url(#dots)"/>
+          <!-- rocks -->
+          <g fill="#6E4A23" opacity=".55"><ellipse cx="180" cy="320" rx="26" ry="12"/><ellipse cx="980" cy="400" rx="34" ry="14"/><ellipse cx="420" cy="470" rx="22" ry="10"/><ellipse cx="820" cy="300" rx="18" ry="8"/></g>
+
+          <!-- aquifer -->
+          <g class="aquifer">
+            <rect y="520" width="1200" height="120" fill="url(#aquifer)"/>
+            <path class="aq-wave" data-wave data-w="1200" data-y="522" data-a="6" data-l="160" data-s="1.2" data-h="640" fill="#4A72FF" opacity=".55"/>
+            <g class="aq-sparkles" fill="#FEF1C4"><circle cx="120" cy="570" r="3"/><circle cx="330" cy="600" r="2"/><circle cx="520" cy="560" r="2.5"/><circle cx="760" cy="590" r="3"/><circle cx="990" cy="565" r="2"/><circle cx="1110" cy="610" r="2.5"/></g>
+            <text x="40" y="618" class="aq-label">AQUIFER · CLEAN GROUNDWATER</text>
+          </g>
+
+          <!-- borehole + drill -->
+          <rect class="bore" x="584" y="196" width="32" height="330" fill="#3A2610" opacity=".85"/>
+          <g clip-path="url(#pipeClip)"><rect class="pipe-rise" x="588" y="600" width="24" height="430" fill="#2B57FF"/></g>
+          <g class="drill">
+            <rect x="592" y="60" width="16" height="140" fill="#5D6B94"/>
+            <path d="M584 200h32l-16 34z" fill="#0B1D7A"/>
+            <path d="M590 206l20 6M592 216l16 5" stroke="#FEF1C4" stroke-width="2"/>
+          </g>
+          <g class="rig">
+            <path d="M540 196l60-150 60 150" fill="none" stroke="#0B1D7A" stroke-width="8" stroke-linejoin="round"/>
+            <path d="M560 146h80M575 106h50" stroke="#0B1D7A" stroke-width="6"/>
+          </g>
+
+          <!-- splash at aquifer -->
+          <g class="splash" transform="translate(600 522)" fill="#7E9BFF">
+            <circle cx="-26" cy="-14" r="6"/><circle cx="22" cy="-22" r="5"/><circle cx="-8" cy="-30" r="4"/><circle cx="12" cy="-10" r="4"/>
+          </g>
+
+          <!-- hand pump + tap -->
+          <g class="pump">
+            <rect x="584" y="120" width="32" height="78" rx="6" fill="#1339F4"/>
+            <rect x="574" y="110" width="52" height="16" rx="6" fill="#0B1D7A"/>
+            <path d="M616 134h40a10 10 0 0 1 10 10v2" fill="none" stroke="#1339F4" stroke-width="12" stroke-linecap="round"/>
+            <path class="pump-handle" d="M584 118l-66-26" stroke="#0B1D7A" stroke-width="9" stroke-linecap="round"/>
+          </g>
+          <!-- stream from tap -->
+          <path class="stream" d="M666 150v14" stroke="#4A72FF" stroke-width="7" stroke-linecap="round"/>
+
+          <!-- jerrycans -->
+          <g class="cans">
+            <g transform="translate(648 194) scale(.85)"><g class="can"><use href="#canShape"/><rect class="can-water" x="4" y="-34" width="36" height="32" rx="4" fill="#1339F4"/></g></g>
+            <g transform="translate(700 194) scale(.85)"><g class="can"><use href="#canShape"/><rect class="can-water" x="4" y="-34" width="36" height="32" rx="4" fill="#1339F4"/></g></g>
+            <g transform="translate(752 194) scale(.85)"><g class="can"><use href="#canShape"/><rect class="can-water" x="4" y="-34" width="36" height="32" rx="4" fill="#1339F4"/></g></g>
+            <g transform="translate(470 194) scale(.85)"><g class="can"><use href="#canShape"/><rect class="can-water" x="4" y="-34" width="36" height="32" rx="4" fill="#1339F4"/></g></g>
+            <g transform="translate(418 194) scale(.85)"><g class="can"><use href="#canShape"/><rect class="can-water" x="4" y="-34" width="36" height="32" rx="4" fill="#1339F4"/></g></g>
+          </g>
+          <defs>
+            <g id="canShape">
+              <rect x="0" y="-38" width="44" height="40" rx="7" fill="#FEF1C4" stroke="#0B1D7A" stroke-width="3"/>
+              <path d="M10 -38v-8h14v8" fill="none" stroke="#0B1D7A" stroke-width="3"/>
+            </g>
+          </defs>
+
+          <!-- depth ruler -->
+          <g class="ruler" font-family="JetBrains Mono, monospace" font-size="13" fill="#0B1D7A">
+            <path d="M1140 200v320" stroke="#0B1D7A" stroke-width="2"/>
+            <path d="M1132 200h16M1132 280h16M1132 360h16M1132 440h16M1132 520h16" stroke="#0B1D7A" stroke-width="2"/>
+            <text x="1084" y="204">0 m</text><text x="1076" y="284">15 m</text><text x="1076" y="364">30 m</text><text x="1076" y="444">45 m</text><text x="1076" y="524">60 m</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="wl-foot">
+        <span>Drill depth <b class="c-depth">0</b> m</span>
+        <span>Jerrycans filled <b class="c-cans">0</b>/5</span>
+        <span class="wl-hint">Keep scrolling to dig</span>
+      </div>
+    </section>
+
+    <!-- ============ TOKEN ============ -->
+    <section class="token" id="token" data-theme="blue">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-blue" data-wave data-w="1440" data-y="60" data-a="20" data-l="560" data-s="-0.9" data-h="121"/>
+      </svg>
+      <div class="token-grid">
+        <div class="token-copy">
+          <p class="label"><span>05</span> The coin</p>
+          <h2 data-split>One ticker.<br><em>One job.</em></h2>
+          <p class="token-lead">$WATER is a community memecoin on Solana with a single purpose: turn trading volume into clean water. Creator rewards flow through donate.gg to WaterAid America, and the Reservoir shows every settled dollar.</p>
+          <dl class="facts">
+            <div><dt>Ticker</dt><dd>$WATER</dd></div>
+            <div><dt>Network</dt><dd>Solana</dd></div>
+            <div><dt>Creator rewards</dt><dd>→ WaterAid America</dd></div>
+            <div><dt>Proof</dt><dd>Live on-chain reservoir</dd></div>
+          </dl>
+        </div>
+
+        <div class="ca-card" data-hover>
+          <div class="ca-coin" aria-hidden="true">
+            <div class="ca-coin-inner">
+              <img src="assets/logo-512.png" alt="" width="512" height="512">
+              <svg class="ca-coin-water" viewBox="0 0 200 200" preserveAspectRatio="none"><path data-wave data-w="200" data-y="150" data-a="6" data-l="90" data-s="2" data-h="201"/></svg>
+            </div>
+          </div>
+          <div class="ca-top">
+            <span class="label">Contract address</span>
+            <span class="pill"><span class="dot"></span>Solana</span>
+          </div>
+          <p class="ca-value" data-ca>COMING SOON</p>
+          <div class="ca-actions">
+            <button class="btn btn-primary magnetic" type="button" data-copy-ca><span>Copy CA</span></button>
+            <a href="#" class="btn btn-ghost magnetic" data-x-link>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span>Follow on X</span>
+            </a>
+          </div>
+          <p class="ca-note">Only trust the address posted here and on our official X. Never on DMs.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ROADMAP ============ -->
+    <section class="roadmap" id="roadmap" data-theme="cream">
+      <svg class="edge edge-top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="fill-cream" data-wave data-w="1440" data-y="64" data-a="18" data-l="420" data-s="1.1" data-h="121"/>
+      </svg>
+      <p class="label"><span>06</span> Roadmap</p>
+      <h2 class="rm-title" data-split>From a drop <em>to a flood.</em></h2>
+
+      <div class="rm-grid">
+        <article class="tube-card" data-level=".22">
+          <svg class="tube" viewBox="0 0 120 300" aria-hidden="true">
+            <defs><clipPath id="tc1"><rect x="14" y="10" width="92" height="280" rx="46"/></clipPath></defs>
+            <g clip-path="url(#tc1)"><path data-wave data-tube data-w="120" data-y="290" data-a="5" data-l="70" data-s="1.8" data-h="300"/></g>
+            <rect class="tube-glass" x="14" y="10" width="92" height="280" rx="46"/>
+          </svg>
+          <span class="rm-n">Drop</span>
+          <h3>Launch on Solana</h3>
+          <p>Contract address revealed here and on X. The first trades start the rain.</p>
+        </article>
+        <article class="tube-card" data-level=".45">
+          <svg class="tube" viewBox="0 0 120 300" aria-hidden="true">
+            <defs><clipPath id="tc2"><rect x="14" y="10" width="92" height="280" rx="46"/></clipPath></defs>
+            <g clip-path="url(#tc2)"><path data-wave data-tube data-w="120" data-y="290" data-a="5" data-l="70" data-s="-1.6" data-h="300"/></g>
+            <rect class="tube-glass" x="14" y="10" width="92" height="280" rx="46"/>
+          </svg>
+          <span class="rm-n">Stream</span>
+          <h3>The reservoir goes live</h3>
+          <p>The tracker starts reading settled receipts. Every dollar to WaterAid America shows up on this page.</p>
+        </article>
+        <article class="tube-card" data-level=".7">
+          <svg class="tube" viewBox="0 0 120 300" aria-hidden="true">
+            <defs><clipPath id="tc3"><rect x="14" y="10" width="92" height="280" rx="46"/></clipPath></defs>
+            <g clip-path="url(#tc3)"><path data-wave data-tube data-w="120" data-y="290" data-a="5" data-l="70" data-s="2.1" data-h="300"/></g>
+            <rect class="tube-glass" x="14" y="10" width="92" height="280" rx="46"/>
+          </svg>
+          <span class="rm-n">River</span>
+          <h3>Beat our own record</h3>
+          <p>Foodcoin gave $70,000+. The goal for $WATER: pour even more into clean water.</p>
+        </article>
+        <article class="tube-card" data-level=".94">
+          <svg class="tube" viewBox="0 0 120 300" aria-hidden="true">
+            <defs><clipPath id="tc4"><rect x="14" y="10" width="92" height="280" rx="46"/></clipPath></defs>
+            <g clip-path="url(#tc4)"><path data-wave data-tube data-w="120" data-y="290" data-a="5" data-l="70" data-s="-2" data-h="300"/></g>
+            <rect class="tube-glass" x="14" y="10" width="92" height="280" rx="46"/>
+          </svg>
+          <span class="rm-n">Flood</span>
+          <h3>Keep it flowing</h3>
+          <p>Thirst doesn't take a season off. As long as there's volume, the water keeps moving.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer" data-theme="blue">
+      <div class="footer-waves" aria-hidden="true">
+        <svg viewBox="0 0 1440 160" preserveAspectRatio="none">
+          <path class="fw1" data-wave data-w="1440" data-y="70" data-a="22" data-l="620" data-s="0.9" data-h="161"/>
+          <path class="fw2" data-wave data-w="1440" data-y="92" data-a="18" data-l="460" data-s="-1.3" data-h="161" data-p="1"/>
+          <path class="fw3" data-wave data-w="1440" data-y="112" data-a="14" data-l="380" data-s="1.7" data-h="161" data-p="2"/>
+        </svg>
+      </div>
+      <div class="footer-cta">
+        <h2 data-split>Jump in. <em>The water's fine.</em></h2>
+        <div class="footer-btns">
+          <a href="#" class="btn btn-cream magnetic" data-x-link>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>Join on X</span>
+          </a>
+          <a href="#token" class="btn btn-ghost magnetic" data-scroll><span>Get the CA</span></a>
+        </div>
+      </div>
+
+      <div class="banner-stage">
+        <div class="banner-card" data-hover>
+          <img src="assets/banner.jpg" alt="Watercoin" width="1280" height="427">
+          <svg class="banner-water" viewBox="0 0 1280 427" preserveAspectRatio="none" aria-hidden="true"><path data-wave data-banner data-w="1280" data-y="440" data-a="14" data-l="420" data-s="1.6" data-h="428"/></svg>
+        </div>
+      </div>
+
+      <div class="footer-grid">
+        <div>
+          <p class="label">Sources</p>
+          <ul class="sources">
+            <li><a href="https://www.who.int/news/item/26-08-2025-1-in-4-people-globally-still-lack-access-to-safe-drinking-water---who--unicef" target="_blank" rel="noopener">WHO &amp; UNICEF: 1 in 4 people still lack safe drinking water (JMP 2025)</a></li>
+            <li><a href="https://washdata.org/reports/jmp-2025-wash-households" target="_blank" rel="noopener">WHO/UNICEF JMP: Progress on household WASH 2000–2024</a></li>
+            <li><a href="https://www.who.int/news-room/fact-sheets/detail/drinking-water" target="_blank" rel="noopener">World Health Organization: Drinking-water fact sheet</a></li>
+            <li><a href="https://www.wateraid.org/us" target="_blank" rel="noopener">WaterAid America</a></li>
+            <li><a href="https://www.donate.gg/charities/water-aid" target="_blank" rel="noopener">donate.gg: WaterAid America Inc.</a></li>
+            <li><a href="https://foodcoin.site" target="_blank" rel="noopener">Foodcoin: chapter one</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="label">Disclaimer</p>
+          <p class="disclaimer">$WATER is a memecoin with no intrinsic value or expectation of financial return. It is not an investment and nothing on this site is financial advice. Crypto is volatile, so only spend what you can afford to lose. Donations are funded by creator rewards, depend on trading volume, and are routed through donate.gg. The Reservoir counts USDC settled on-chain to WaterAid America's donate.gg wallet, net of donate.gg's processing fee; it does not confirm how funds are spent. Watercoin is an independent community project and is not affiliated with or endorsed by WaterAid or donate.gg.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year></span> Watercoin</span>
+        <span>Poured on Solana</span>
+        <a href="#top" data-scroll>Back to the surface ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- If the animation layer fails or stalls, restore a readable page (the reservoir runs independently). -->
+  <script>
+    window.__wcRescue = function () {
+      document.body.classList.remove('is-loading');
+      document.documentElement.classList.remove('lenis-stopped');
+      var pl = document.querySelector('.preloader'); if (pl) pl.style.display = 'none';
+    };
+    setTimeout(function () { if (!window.__wcBooted) window.__wcRescue(); }, 8000);
+  </script>
+  <script src="meter.js"></script>
+  <script src="water.js"></script>
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

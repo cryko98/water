@@ -1,0 +1,17 @@
+{
+  "name": "watercoin-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Watercoin ($WATER) website with the server-side Reservoir donation tracker (/api/meter).",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node tools/dev-server.js",
+    "test": "node --test \"api/**/*.test.js\""
+  },
+  "dependencies": {
+    "@solana/addresses": "2.1.0"
+  }
+}
